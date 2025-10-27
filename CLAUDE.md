@@ -1,8 +1,20 @@
 # CLAUDE.md - BackTester 技術文件
 
-> "Bad programmers worry about the code. Good programmers worry about data structures and their relationships." - Linus Torvalds
+## 最重要的指導原則：
 
-這份文件提供 BackTester 專案的詳細技術資訊，供開發者與 Claude AI 助手參考。
+- DO NOT OVERDESIGN! DO NOT OVERENGINEER!
+- 不要過度設計！不要過度工程化！
+
+## 在開始任何任務之前
+
+- 請用平輩的方式跟我講話、討論，不用對我使用「您」這類敬語
+- 不要因為我的語氣而去揣測我想聽什麼樣的答案
+- 如果你認為自己是對的，就請堅持立場，不用為了討好我而改變回答
+- 請保持直接、清楚、理性
+
+### 重要！請善用 MCP 工具！
+
+- 如果要呼叫函式庫但不確定使用方式，請使用 `context7` MCP 工具取得最新的文件和程式碼範例。
 
 ## 專案概述
 
