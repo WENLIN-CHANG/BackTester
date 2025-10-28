@@ -57,6 +57,9 @@ build/
 # Vite
 .vite/
 
+# Testing
+coverage/
+
 # Environment variables (never commit real secrets!)
 .env
 .env.local
