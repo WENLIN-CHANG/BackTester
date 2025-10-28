@@ -22,9 +22,10 @@ class TestYFinanceAdapter:
 
     @pytest.fixture
     def recent_date_range(self) -> tuple[datetime, datetime]:
-        """Get recent date range for testing"""
-        end_date = datetime.now()
-        start_date = end_date - timedelta(days=180)  # ~6 months
+        """Get recent date range for testing - use fixed historical dates to avoid rate limits"""
+        # Use fixed date range (2024-01-01 to 2024-06-30)
+        start_date = datetime(2024, 1, 1)
+        end_date = datetime(2024, 6, 30)
         return start_date, end_date
 
     def test_fetches_valid_stock_data(
