@@ -1,11 +1,11 @@
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
+import type { UseMutationResult } from '@tanstack/react-query';
 import { Card, Input, Button } from '@/components/ui';
 import { StockSelector } from './StockSelector';
 import { DEFAULT_VALUES, LIMITS } from '@/constants';
-import { useBacktest } from '@/hooks/useBacktest';
-import type { BacktestRequest } from '@/types';
+import type { BacktestRequest, BacktestResponse } from '@/types';
 
 const backtestSchema = z.object({
   stocks: z.array(z.string().min(1, '股票代碼不能為空')).min(1).max(LIMITS.MAX_STOCKS),
@@ -26,11 +26,11 @@ const backtestSchema = z.object({
 type BacktestFormData = z.infer<typeof backtestSchema>;
 
 interface BacktestFormProps {
-  onSuccess?: () => void;
+  mutation: UseMutationResult<BacktestResponse, Error, BacktestRequest>;
 }
 
-export function BacktestForm({ onSuccess }: BacktestFormProps) {
-  const { mutate, isPending } = useBacktest();
+export function BacktestForm({ mutation }: BacktestFormProps) {
+  const { mutate, isPending } = mutation;
 
   const { control, handleSubmit, formState: { errors } } = useForm<BacktestFormData>({
     resolver: zodResolver(backtestSchema),
@@ -51,11 +51,7 @@ export function BacktestForm({ onSuccess }: BacktestFormProps) {
       stocks: data.stocks.map((s) => s.trim().toUpperCase()),
     };
 
-    mutate(request, {
-      onSuccess: () => {
-        onSuccess?.();
-      },
-    });
+    mutate(request);
   };
 
   return (
