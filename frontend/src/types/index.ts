@@ -65,6 +65,18 @@ export interface ComparisonResult {
   best_sharpe: string;      // Symbol with best Sharpe ratio
   lowest_risk: string;      // Symbol with lowest volatility
   best_cagr: string;        // Symbol with best CAGR
+
+  // Additional comparison data
+  best_performer: {
+    symbol: string;
+    total_return: number;
+  };
+  worst_performer: {
+    symbol: string;
+    total_return: number;
+  };
+  average_return: number;
+  total_invested: number;
 }
 
 export interface BacktestResponse {
