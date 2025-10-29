@@ -10,7 +10,7 @@ This makes them easy to test and reason about.
 """
 
 from typing import List
-from domain.models import BacktestResult, Comparison
+from domain.models import BacktestResult, Comparison, PerformerInfo
 
 
 def calculate_cagr(initial: float, final: float, years: float) -> float:
@@ -169,9 +169,29 @@ def calculate_comparison(results: List[BacktestResult]) -> Comparison:
     lowest_risk = min(results, key=lambda r: r.volatility)
     best_cagr = max(results, key=lambda r: r.cagr)
 
+    # Find overall best and worst performers (by total return)
+    best_performer_result = max(results, key=lambda r: r.total_return)
+    worst_performer_result = min(results, key=lambda r: r.total_return)
+
+    # Calculate average return
+    average_return = sum(r.total_return for r in results) / len(results)
+
+    # Calculate total invested (sum of all investments)
+    total_invested = sum(r.total_invested for r in results)
+
     return Comparison(
         best_return=best_return.symbol,
         best_sharpe=best_sharpe.symbol,
         lowest_risk=lowest_risk.symbol,
         best_cagr=best_cagr.symbol,
+        best_performer=PerformerInfo(
+            symbol=best_performer_result.symbol,
+            total_return=best_performer_result.total_return,
+        ),
+        worst_performer=PerformerInfo(
+            symbol=worst_performer_result.symbol,
+            total_return=worst_performer_result.total_return,
+        ),
+        average_return=average_return,
+        total_invested=total_invested,
     )

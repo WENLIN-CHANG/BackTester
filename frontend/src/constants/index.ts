@@ -58,16 +58,16 @@ export const DEFAULT_VALUES = {
   INVESTMENT_AMOUNT: 10000,
   STOCKS: [''] as string[],
 
-  // Default date range: last 1 year
+  // Default date range: 2 years ago to 1 year ago (ensure historical data)
   get START_DATE() {
     const date = new Date();
-    date.setFullYear(date.getFullYear() - 1);
+    date.setFullYear(date.getFullYear() - 2);
     return date.toISOString().split('T')[0];
   },
 
   get END_DATE() {
     const date = new Date();
-    date.setDate(date.getDate() - 1); // Yesterday
+    date.setFullYear(date.getFullYear() - 1);
     return date.toISOString().split('T')[0];
   },
 } as const;

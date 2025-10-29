@@ -89,15 +89,37 @@ class BacktestResult:
 
 
 @dataclass(frozen=True)
+class PerformerInfo:
+    """Information about a performer in comparison"""
+
+    symbol: str
+    total_return: float
+
+    def __post_init__(self) -> None:
+        """Validate data on initialization"""
+        if not self.symbol:
+            raise ValueError("Symbol cannot be empty")
+
+
+@dataclass(frozen=True)
 class Comparison:
     """Comparison metrics across multiple backtests"""
 
+    # Simple comparisons (symbol only)
     best_return: str  # Symbol with best total return
     best_sharpe: str  # Symbol with best Sharpe ratio
     lowest_risk: str  # Symbol with lowest volatility
     best_cagr: str  # Symbol with best CAGR
 
+    # Detailed comparisons
+    best_performer: PerformerInfo  # Best performer with details
+    worst_performer: PerformerInfo  # Worst performer with details
+    average_return: float  # Average return across all stocks
+    total_invested: float  # Total amount invested
+
     def __post_init__(self) -> None:
         """Validate data on initialization"""
         if not all([self.best_return, self.best_sharpe, self.lowest_risk, self.best_cagr]):
             raise ValueError("All comparison fields must be non-empty")
+        if self.total_invested <= 0:
+            raise ValueError("Total invested must be positive")

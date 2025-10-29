@@ -46,10 +46,22 @@ def convert_result_to_schema(result: BacktestResult) -> dict:
 def convert_comparison_to_schema(comparison: Comparison) -> dict:
     """Convert domain Comparison to API schema dict"""
     return {
+        # Simple comparisons
         "best_return": comparison.best_return,
         "best_sharpe": comparison.best_sharpe,
         "lowest_risk": comparison.lowest_risk,
         "best_cagr": comparison.best_cagr,
+        # Detailed comparisons
+        "best_performer": {
+            "symbol": comparison.best_performer.symbol,
+            "total_return": comparison.best_performer.total_return,
+        },
+        "worst_performer": {
+            "symbol": comparison.worst_performer.symbol,
+            "total_return": comparison.worst_performer.total_return,
+        },
+        "average_return": comparison.average_return,
+        "total_invested": comparison.total_invested,
     }
 
 

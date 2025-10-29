@@ -93,13 +93,34 @@ class BacktestResultSchema(BaseModel):
         from_attributes = True
 
 
+class PerformerInfoSchema(BaseModel):
+    """Information about a performer in comparison"""
+
+    symbol: str = Field(..., description="Stock symbol")
+    total_return: float = Field(..., description="Total return rate")
+
+    class Config:
+        from_attributes = True
+
+
 class ComparisonSchema(BaseModel):
     """Comparison of multiple backtest results"""
 
+    # Simple comparisons (symbol only)
     best_return: str = Field(..., description="Symbol with best total return")
     best_sharpe: str = Field(..., description="Symbol with best Sharpe ratio")
     lowest_risk: str = Field(..., description="Symbol with lowest volatility")
     best_cagr: str = Field(..., description="Symbol with best CAGR")
+
+    # Detailed comparisons
+    best_performer: PerformerInfoSchema = Field(
+        ..., description="Best performer with details"
+    )
+    worst_performer: PerformerInfoSchema = Field(
+        ..., description="Worst performer with details"
+    )
+    average_return: float = Field(..., description="Average return across all stocks")
+    total_invested: float = Field(..., description="Total amount invested")
 
     class Config:
         from_attributes = True
