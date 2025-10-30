@@ -9,9 +9,10 @@ This layer contains all side effects:
 """
 
 from datetime import datetime
-from typing import List, Optional
-import yfinance as yf
+
 import requests
+import yfinance as yf
+
 from domain.models import StockPrice
 from infrastructure.cache import StockCache
 
@@ -34,6 +35,7 @@ class YFinanceAdapter:
             cache_ttl_hours: Cache time-to-live in hours (default: 24)
         """
         self.cache_enabled = cache_enabled
+        self.cache: StockCache | None
         if cache_enabled:
             self.cache = StockCache(ttl_hours=cache_ttl_hours)
         else:
@@ -41,16 +43,18 @@ class YFinanceAdapter:
 
         # Setup requests session with headers
         self.session = requests.Session()
-        self.session.headers.update({
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
-        })
+        self.session.headers.update(
+            {
+                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
+            }
+        )
 
     def _fetch_with_requests(
         self,
         symbol: str,
         start_date: datetime,
         end_date: datetime,
-    ) -> Optional[tuple[List[StockPrice], str]]:
+    ) -> tuple[list[StockPrice], str] | None:
         """
         Fetch data directly using requests library (bypass yfinance)
 
@@ -65,36 +69,35 @@ class YFinanceAdapter:
             Tuple of (prices, stock_name) or None if failed
         """
         try:
-            url = 'https://query1.finance.yahoo.com/v8/finance/chart/' + symbol
+            url = "https://query1.finance.yahoo.com/v8/finance/chart/" + symbol
             params = {
-                'period1': int(start_date.timestamp()),
-                'period2': int(end_date.timestamp()),
-                'interval': '1d'
+                "period1": int(start_date.timestamp()),
+                "period2": int(end_date.timestamp()),
+                "interval": "1d",
             }
 
-            response = self.session.get(url, params=params, timeout=10)
+            response = self.session.get(url, params=params, timeout=10)  # type: ignore[arg-type]
             response.raise_for_status()
 
             data = response.json()
-            result = data['chart']['result'][0]
+            result = data["chart"]["result"][0]
 
             # Extract stock metadata
-            meta = result.get('meta', {})
-            stock_name = meta.get('longName') or meta.get('shortName') or symbol
+            meta = result.get("meta", {})
+            stock_name = meta.get("longName") or meta.get("shortName") or symbol
 
             # Extract price data
-            timestamps = result['timestamp']
-            quotes = result['indicators']['quote'][0]
-            closes = quotes['close']
+            timestamps = result["timestamp"]
+            quotes = result["indicators"]["quote"][0]
+            closes = quotes["close"]
 
             # Convert to StockPrice objects
             prices = []
             for i, timestamp in enumerate(timestamps):
                 if closes[i] is not None:  # Skip days with no data
-                    prices.append(StockPrice(
-                        date=datetime.fromtimestamp(timestamp),
-                        close=float(closes[i])
-                    ))
+                    prices.append(
+                        StockPrice(date=datetime.fromtimestamp(timestamp), close=float(closes[i]))
+                    )
 
             if len(prices) < 10:
                 return None
@@ -110,7 +113,7 @@ class YFinanceAdapter:
         symbol: str,
         start_date: datetime,
         end_date: datetime,
-    ) -> tuple[List[StockPrice], str]:
+    ) -> tuple[list[StockPrice], str]:
         """
         Fetch stock price data from Yahoo Finance (with caching)
 
@@ -133,9 +136,7 @@ class YFinanceAdapter:
             if cached_data is not None:
                 # Reconstruct StockPrice objects from cached data
                 prices = [
-                    StockPrice(
-                        date=datetime.fromisoformat(p["date"]), close=p["close"]
-                    )
+                    StockPrice(date=datetime.fromisoformat(p["date"]), close=p["close"])
                     for p in cached_data["prices"]
                 ]
                 return prices, cached_data["stock_name"]
@@ -148,9 +149,7 @@ class YFinanceAdapter:
             # Store in cache before returning
             if self.cache_enabled and self.cache:
                 cache_data = {
-                    "prices": [
-                        {"date": p.date.isoformat(), "close": p.close} for p in prices
-                    ],
+                    "prices": [{"date": p.date.isoformat(), "close": p.close} for p in prices],
                     "stock_name": stock_name,
                 }
                 self.cache.set(symbol, start_date, end_date, cache_data)
@@ -174,15 +173,13 @@ class YFinanceAdapter:
             # Get stock name
             try:
                 stock_info = ticker.info
-                stock_name = stock_info.get("longName") or stock_info.get(
-                    "shortName"
-                ) or symbol
+                stock_name = stock_info.get("longName") or stock_info.get("shortName") or symbol
             except Exception:
                 # If info fetch fails, just use symbol
                 stock_name = symbol
 
             # Convert to domain models
-            prices: List[StockPrice] = []
+            prices = []
             for date, row in df.iterrows():
                 try:
                     price = StockPrice(
@@ -190,7 +187,7 @@ class YFinanceAdapter:
                         close=float(row["Close"]),
                     )
                     prices.append(price)
-                except (KeyError, ValueError, TypeError) as e:
+                except (KeyError, ValueError, TypeError):
                     # Skip invalid rows
                     continue
 
@@ -203,9 +200,7 @@ class YFinanceAdapter:
             # Store in cache before returning
             if self.cache_enabled and self.cache:
                 cache_data = {
-                    "prices": [
-                        {"date": p.date.isoformat(), "close": p.close} for p in prices
-                    ],
+                    "prices": [{"date": p.date.isoformat(), "close": p.close} for p in prices],
                     "stock_name": stock_name,
                 }
                 self.cache.set(symbol, start_date, end_date, cache_data)
@@ -217,9 +212,7 @@ class YFinanceAdapter:
             raise
         except Exception as e:
             # Catch all other errors and wrap them
-            raise StockDataError(
-                f"Failed to fetch data for {symbol}: {str(e)}"
-            ) from e
+            raise StockDataError(f"Failed to fetch data for {symbol}: {e!s}") from e
 
     def get_stock_name(self, symbol: str) -> str:
         """
@@ -239,6 +232,4 @@ class YFinanceAdapter:
             info = ticker.info
             return info.get("longName") or info.get("shortName") or symbol
         except Exception as e:
-            raise StockDataError(
-                f"Failed to fetch stock name for {symbol}: {str(e)}"
-            ) from e
+            raise StockDataError(f"Failed to fetch stock name for {symbol}: {e!s}") from e

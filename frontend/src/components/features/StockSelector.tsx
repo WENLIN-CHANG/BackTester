@@ -1,7 +1,7 @@
-import { useState } from 'react';
-import { Input, Button } from '@/components/ui';
-import { normalizeStockSymbol, getStockSymbolError } from '@/utils/validation';
-import { LIMITS } from '@/constants';
+import { useState } from "react";
+import { Input, Button } from "@/components/ui";
+import { normalizeStockSymbol, getStockSymbolError } from "@/utils/validation";
+import { LIMITS } from "@/constants";
 
 interface StockSelectorProps {
   stocks: string[];
@@ -26,7 +26,7 @@ export function StockSelector({ stocks, onChange }: StockSelectorProps) {
 
   const handleAddStock = () => {
     if (stocks.length < LIMITS.MAX_STOCKS) {
-      onChange([...stocks, '']);
+      onChange([...stocks, ""]);
     }
   };
 

@@ -5,16 +5,18 @@ Following TDD: Write tests first, then implementation.
 Goal: 100% coverage for domain layer.
 """
 
-import pytest
 from datetime import datetime
+
+import pytest
+
 from domain.calculations import (
     calculate_cagr,
-    calculate_max_drawdown,
-    calculate_volatility,
-    calculate_sharpe_ratio,
     calculate_comparison,
+    calculate_max_drawdown,
+    calculate_sharpe_ratio,
+    calculate_volatility,
 )
-from domain.models import BacktestResult, PortfolioSnapshot, Comparison
+from domain.models import BacktestResult, PortfolioSnapshot
 
 
 class TestCalculateCAGR:

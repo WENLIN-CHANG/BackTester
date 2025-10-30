@@ -8,11 +8,12 @@ Orchestrates domain logic and infrastructure:
 """
 
 from datetime import datetime
-from typing import List, Literal
-from domain.models import BacktestResult, Comparison
+from typing import Literal
+
 from domain import backtest as backtest_logic
 from domain.calculations import calculate_comparison
-from infrastructure.yfinance_adapter import YFinanceAdapter, StockDataError
+from domain.models import BacktestResult, Comparison
+from infrastructure.yfinance_adapter import StockDataError, YFinanceAdapter
 
 
 class BacktestService:
@@ -58,9 +59,7 @@ class BacktestService:
             ValueError: If parameters are invalid
         """
         # Fetch data (side effect - infrastructure layer)
-        prices, stock_name = self.data_adapter.get_stock_data(
-            symbol, start_date, end_date
-        )
+        prices, stock_name = self.data_adapter.get_stock_data(symbol, start_date, end_date)
 
         # Run backtest (pure function - domain layer)
         if strategy == "lump_sum":
@@ -84,12 +83,12 @@ class BacktestService:
 
     def run_multiple_backtests(
         self,
-        symbols: List[str],
+        symbols: list[str],
         start_date: datetime,
         end_date: datetime,
         strategy: Literal["lump_sum", "dca"],
         amount: float,
-    ) -> tuple[List[BacktestResult], Comparison]:
+    ) -> tuple[list[BacktestResult], Comparison]:
         """
         Run backtests for multiple stocks and compare results
 
@@ -111,8 +110,8 @@ class BacktestService:
         if not symbols:
             raise ValueError("At least one symbol is required")
 
-        results: List[BacktestResult] = []
-        errors: List[tuple[str, str]] = []
+        results: list[BacktestResult] = []
+        errors: list[tuple[str, str]] = []
 
         # Run backtest for each symbol
         for symbol in symbols:
@@ -131,7 +130,7 @@ class BacktestService:
                 continue
             except Exception as e:
                 # Unexpected errors
-                errors.append((symbol, f"Unexpected error: {str(e)}"))
+                errors.append((symbol, f"Unexpected error: {e!s}"))
                 continue
 
         # Check if we have any successful results

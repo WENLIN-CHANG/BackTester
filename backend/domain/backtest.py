@@ -7,18 +7,17 @@ All backtest functions are pure:
 - Easy to test and reason about
 """
 
-from typing import List
-from domain.models import StockPrice, PortfolioSnapshot, BacktestResult
 from domain.calculations import (
     calculate_cagr,
     calculate_max_drawdown,
-    calculate_volatility,
     calculate_sharpe_ratio,
+    calculate_volatility,
 )
+from domain.models import BacktestResult, PortfolioSnapshot, StockPrice
 
 
 def backtest_lump_sum(
-    prices: List[StockPrice],
+    prices: list[StockPrice],
     initial_amount: float,
     symbol: str = "",
     name: str = "",
@@ -51,7 +50,7 @@ def backtest_lump_sum(
     shares = initial_amount / first_price
 
     # Build portfolio history
-    history: List[PortfolioSnapshot] = []
+    history: list[PortfolioSnapshot] = []
     for price in prices:
         snapshot = PortfolioSnapshot(
             date=price.date,
@@ -76,7 +75,7 @@ def backtest_lump_sum(
     max_dd = calculate_max_drawdown(values)
 
     # Calculate daily returns for volatility and Sharpe
-    returns: List[float] = []
+    returns: list[float] = []
     for i in range(1, len(values)):
         if values[i - 1] > 0:
             daily_return = (values[i] - values[i - 1]) / values[i - 1]
@@ -106,7 +105,7 @@ def backtest_lump_sum(
 
 
 def backtest_dca(
-    prices: List[StockPrice],
+    prices: list[StockPrice],
     monthly_amount: float,
     symbol: str = "",
     name: str = "",
@@ -140,7 +139,7 @@ def backtest_dca(
     last_month = None
 
     # Build portfolio history
-    history: List[PortfolioSnapshot] = []
+    history: list[PortfolioSnapshot] = []
 
     for price in prices:
         current_month = (price.date.year, price.date.month)
@@ -177,7 +176,7 @@ def backtest_dca(
     max_dd = calculate_max_drawdown(values)
 
     # Calculate daily returns for volatility and Sharpe
-    returns: List[float] = []
+    returns: list[float] = []
     for i in range(1, len(values)):
         if values[i - 1] > 0:
             daily_return = (values[i] - values[i - 1]) / values[i - 1]

@@ -1,0 +1,25 @@
+# Bandit configuration for BackTester
+# Security scanning for Python code
+
+[bandit]
+# Exclude test files from security scanning
+exclude_dirs = /tests
+
+# Tests to skip (comma-separated list of test IDs)
+# B101: assert_used - Allow asserts in tests (handled by exclude_dirs)
+# B311: random - pseudo-random generators are ok for non-security purposes
+skips =
+
+# Tests to run (comma-separated list of test IDs)
+# Leave empty to run all tests
+tests =
+
+# Severity level threshold
+# Options: low, medium, high
+# Only report issues at or above this severity level
+severity = medium
+
+# Confidence level threshold
+# Options: low, medium, high
+# Only report issues at or above this confidence level
+confidence = medium

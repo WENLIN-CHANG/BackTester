@@ -7,7 +7,7 @@ No external dependencies allowed in this layer.
 
 from dataclasses import dataclass
 from datetime import datetime
-from typing import List, Literal
+from typing import Literal
 
 
 @dataclass(frozen=True)
@@ -67,7 +67,7 @@ class BacktestResult:
     total_invested: float
 
     # Historical data
-    history: List[PortfolioSnapshot]
+    history: list[PortfolioSnapshot]
 
     def __post_init__(self) -> None:
         """Validate data on initialization"""
@@ -77,15 +77,11 @@ class BacktestResult:
         if self.final_value < 0:
             raise ValueError(f"Final value cannot be negative, got {self.final_value}")
         if self.total_invested <= 0:
-            raise ValueError(
-                f"Total invested must be positive, got {self.total_invested}"
-            )
+            raise ValueError(f"Total invested must be positive, got {self.total_invested}")
         if not self.history:
             raise ValueError("History cannot be empty")
         if self.max_drawdown > 0:
-            raise ValueError(
-                f"Max drawdown must be negative or zero, got {self.max_drawdown}"
-            )
+            raise ValueError(f"Max drawdown must be negative or zero, got {self.max_drawdown}")
 
 
 @dataclass(frozen=True)

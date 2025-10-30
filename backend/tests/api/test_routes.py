@@ -5,15 +5,16 @@ E2E tests using TestClient.
 Mocks the service layer to avoid real API calls and calculations.
 """
 
+from datetime import datetime
+from unittest.mock import Mock
+
 import pytest
-from datetime import datetime, date
-from unittest.mock import Mock, patch
 from fastapi.testclient import TestClient
-from main import app
+
 from api.dependencies import get_backtest_service
 from domain.models import BacktestResult, Comparison, PortfolioSnapshot
 from infrastructure.yfinance_adapter import StockDataError
-
+from main import app
 
 # ============================================================================
 # Fixtures

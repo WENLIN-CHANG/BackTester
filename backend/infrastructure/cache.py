@@ -5,11 +5,11 @@ Caches Yahoo Finance API responses to avoid rate limiting.
 Uses JSON files stored in .cache/ directory with 24-hour TTL.
 """
 
+import hashlib
 import json
 from datetime import datetime, timedelta
 from pathlib import Path
-from typing import Optional, Any
-import hashlib
+from typing import Any, cast
 
 
 class StockCache:
@@ -43,15 +43,14 @@ class StockCache:
         """
         key_str = f"{symbol}_{start_date}_{end_date}"
         # Use hash to avoid filesystem issues with special characters
-        return hashlib.md5(key_str.encode()).hexdigest()
+        # MD5 is used for cache key generation, not security
+        return hashlib.md5(key_str.encode(), usedforsecurity=False).hexdigest()
 
     def _get_cache_path(self, cache_key: str) -> Path:
         """Get full path to cache file"""
         return self.cache_dir / f"{cache_key}.json"
 
-    def get(
-        self, symbol: str, start_date: datetime, end_date: datetime
-    ) -> Optional[dict[str, Any]]:
+    def get(self, symbol: str, start_date: datetime, end_date: datetime) -> dict[str, Any] | None:
         """
         Retrieve cached data if available and not expired
 
@@ -74,7 +73,7 @@ class StockCache:
                 return None
 
             # Read cache file
-            with open(cache_path, "r", encoding="utf-8") as f:
+            with open(cache_path, encoding="utf-8") as f:
                 cached_data = json.load(f)
 
             # Check expiration
@@ -84,7 +83,7 @@ class StockCache:
                 cache_path.unlink()
                 return None
 
-            return cached_data["data"]
+            return cast(dict[str, Any], cached_data["data"])
 
         except Exception:
             # If any error occurs, treat as cache miss
@@ -134,7 +133,7 @@ class StockCache:
         try:
             for cache_file in self.cache_dir.glob("*.json"):
                 try:
-                    with open(cache_file, "r", encoding="utf-8") as f:
+                    with open(cache_file, encoding="utf-8") as f:
                         cached_data = json.load(f)
 
                     cached_time = datetime.fromisoformat(cached_data["cached_at"])

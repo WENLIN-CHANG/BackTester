@@ -5,10 +5,12 @@ These are integration tests that make real API calls to Yahoo Finance.
 Mark with @pytest.mark.integration to allow selective execution.
 """
 
-import pytest
 from datetime import datetime, timedelta
-from infrastructure.yfinance_adapter import YFinanceAdapter, StockDataError
+
+import pytest
+
 from domain.models import StockPrice
+from infrastructure.yfinance_adapter import StockDataError, YFinanceAdapter
 
 
 @pytest.mark.integration
@@ -159,6 +161,6 @@ class TestYFinanceAdapter:
 
         # Then: All should succeed
         assert len(results) == 3
-        for symbol, prices, name in results:
+        for _symbol, prices, name in results:
             assert len(prices) > 100
             assert name

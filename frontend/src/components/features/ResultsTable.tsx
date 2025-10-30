@@ -1,6 +1,10 @@
-import { Card } from '@/components/ui';
-import { formatPercent, formatCurrency, formatSharpeRatio } from '@/utils/format';
-import type { BacktestResult, ComparisonResult } from '@/types';
+import { Card } from "@/components/ui";
+import {
+  formatPercent,
+  formatCurrency,
+  formatSharpeRatio,
+} from "@/utils/format";
+import type { BacktestResult, ComparisonResult } from "@/types";
 
 interface ResultsTableProps {
   results: BacktestResult[];
@@ -46,18 +50,28 @@ export function ResultsTable({ results, comparison }: ResultsTableProps) {
                 >
                   <td className="px-6 py-4 border-r-2 border-[#E5E5E5]">
                     <div>
-                      <div className="font-bold text-base text-brutal-black">{result.symbol}</div>
-                      <div className="text-sm font-medium text-[#666666]">{result.name}</div>
+                      <div className="font-bold text-base text-brutal-black">
+                        {result.symbol}
+                      </div>
+                      <div className="text-sm font-medium text-[#666666]">
+                        {result.name}
+                      </div>
                     </div>
                   </td>
-                  <td className={`text-right px-6 py-4 text-base font-mono font-bold border-r-2 border-[#E5E5E5] ${
-                    result.total_return >= 0 ? 'text-success-500' : 'text-danger-500'
-                  }`}>
+                  <td
+                    className={`text-right px-6 py-4 text-base font-mono font-bold border-r-2 border-[#E5E5E5] ${
+                      result.total_return >= 0
+                        ? "text-success-500"
+                        : "text-danger-500"
+                    }`}
+                  >
                     {formatPercent(result.total_return)}
                   </td>
-                  <td className={`text-right px-6 py-4 text-base font-mono font-bold border-r-2 border-[#E5E5E5] ${
-                    result.cagr >= 0 ? 'text-success-500' : 'text-danger-500'
-                  }`}>
+                  <td
+                    className={`text-right px-6 py-4 text-base font-mono font-bold border-r-2 border-[#E5E5E5] ${
+                      result.cagr >= 0 ? "text-success-500" : "text-danger-500"
+                    }`}
+                  >
                     {formatPercent(result.cagr)}
                   </td>
                   <td className="text-right px-6 py-4 text-base font-mono font-bold text-danger-500 border-r-2 border-[#E5E5E5]">
@@ -116,9 +130,13 @@ export function ResultsTable({ results, comparison }: ResultsTableProps) {
             <div className="text-sm font-black uppercase tracking-wide text-brutal-black mb-3">
               平均報酬率
             </div>
-            <div className={`text-4xl font-black font-mono mb-2 ${
-              comparison.average_return >= 0 ? 'text-success-500' : 'text-danger-500'
-            }`}>
+            <div
+              className={`text-4xl font-black font-mono mb-2 ${
+                comparison.average_return >= 0
+                  ? "text-success-500"
+                  : "text-danger-500"
+              }`}
+            >
               {formatPercent(comparison.average_return)}
             </div>
           </div>

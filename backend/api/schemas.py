@@ -5,9 +5,9 @@ These models define the HTTP API interface.
 """
 
 from datetime import date, datetime
-from typing import List, Literal
-from pydantic import BaseModel, Field, field_validator
+from typing import Any, Literal
 
+from pydantic import BaseModel, Field, field_validator
 
 # Request schemas
 
@@ -21,7 +21,7 @@ class InvestmentParams(BaseModel):
 class BacktestRequest(BaseModel):
     """Request body for backtest endpoint"""
 
-    stocks: List[str] = Field(
+    stocks: list[str] = Field(
         ...,
         min_length=1,
         max_length=10,
@@ -29,14 +29,12 @@ class BacktestRequest(BaseModel):
     )
     start_date: date = Field(..., description="Backtest start date")
     end_date: date = Field(..., description="Backtest end date")
-    strategy: Literal["lump_sum", "dca"] = Field(
-        ..., description="Investment strategy"
-    )
+    strategy: Literal["lump_sum", "dca"] = Field(..., description="Investment strategy")
     investment: InvestmentParams = Field(..., description="Investment parameters")
 
     @field_validator("end_date")
     @classmethod
-    def end_date_must_be_after_start_date(cls, v: date, info) -> date:
+    def end_date_must_be_after_start_date(cls, v: date, info: Any) -> date:
         """Validate end_date is after start_date"""
         if "start_date" in info.data and v <= info.data["start_date"]:
             raise ValueError("end_date must be after start_date")
@@ -44,7 +42,7 @@ class BacktestRequest(BaseModel):
 
     @field_validator("stocks")
     @classmethod
-    def stocks_must_not_be_empty(cls, v: List[str]) -> List[str]:
+    def stocks_must_not_be_empty(cls, v: list[str]) -> list[str]:
         """Validate stock symbols are not empty"""
         if any(not symbol.strip() for symbol in v):
             raise ValueError("Stock symbols cannot be empty")
@@ -87,7 +85,7 @@ class BacktestResultSchema(BaseModel):
     total_invested: float
 
     # Historical data
-    history: List[PortfolioSnapshotSchema]
+    history: list[PortfolioSnapshotSchema]
 
     class Config:
         from_attributes = True
@@ -113,12 +111,8 @@ class ComparisonSchema(BaseModel):
     best_cagr: str = Field(..., description="Symbol with best CAGR")
 
     # Detailed comparisons
-    best_performer: PerformerInfoSchema = Field(
-        ..., description="Best performer with details"
-    )
-    worst_performer: PerformerInfoSchema = Field(
-        ..., description="Worst performer with details"
-    )
+    best_performer: PerformerInfoSchema = Field(..., description="Best performer with details")
+    worst_performer: PerformerInfoSchema = Field(..., description="Worst performer with details")
     average_return: float = Field(..., description="Average return across all stocks")
     total_invested: float = Field(..., description="Total amount invested")
 
@@ -129,9 +123,7 @@ class ComparisonSchema(BaseModel):
 class BacktestResponse(BaseModel):
     """Response body for backtest endpoint"""
 
-    results: List[BacktestResultSchema] = Field(
-        ..., description="List of backtest results"
-    )
+    results: list[BacktestResultSchema] = Field(..., description="List of backtest results")
     comparison: ComparisonSchema = Field(..., description="Comparison of results")
 
 

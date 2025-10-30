@@ -1,4 +1,4 @@
-import { LIMITS, VALIDATION_REGEX } from '@/constants';
+import { LIMITS, VALIDATION_REGEX } from "@/constants";
 
 // Stock Symbol
 export function isValidStockSymbol(symbol: string): boolean {
@@ -81,33 +81,33 @@ export function removeDuplicateStocks(stocks: string[]): string[] {
 // Error Messages
 export function getStockSymbolError(symbol: string): string {
   if (!symbol || symbol.trim().length === 0) {
-    return '股票代碼不能為空';
+    return "股票代碼不能為空";
   }
   if (!isValidStockSymbol(symbol)) {
-    return '股票代碼格式錯誤（例如：AAPL 或 2330.TW）';
+    return "股票代碼格式錯誤（例如：AAPL 或 2330.TW）";
   }
-  return '';
+  return "";
 }
 
 export function getDateRangeError(startDate: string, endDate: string): string {
   if (!isValidDateString(startDate)) {
-    return '開始日期格式錯誤';
+    return "開始日期格式錯誤";
   }
   if (!isValidDateString(endDate)) {
-    return '結束日期格式錯誤';
+    return "結束日期格式錯誤";
   }
   if (!isValidDateRange(startDate, endDate)) {
-    return '結束日期必須晚於開始日期';
+    return "結束日期必須晚於開始日期";
   }
   if (!isNotFutureDate(endDate)) {
-    return '結束日期不能是未來';
+    return "結束日期不能是未來";
   }
-  return '';
+  return "";
 }
 
 export function getAmountError(amount: number): string {
   if (isNaN(amount) || !isFinite(amount)) {
-    return '請輸入有效的金額';
+    return "請輸入有效的金額";
   }
   if (amount < LIMITS.MIN_INVESTMENT) {
     return `投資金額最少為 ${LIMITS.MIN_INVESTMENT.toLocaleString()} 元`;
@@ -118,5 +118,5 @@ export function getAmountError(amount: number): string {
   if (!isValidAmountStep(amount)) {
     return `投資金額必須是 ${LIMITS.MIN_INVESTMENT_STEP} 的倍數`;
   }
-  return '';
+  return "";
 }

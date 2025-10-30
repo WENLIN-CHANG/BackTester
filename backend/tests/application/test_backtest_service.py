@@ -5,13 +5,14 @@ Tests the service layer that coordinates domain and infrastructure.
 Uses mocks to avoid real API calls.
 """
 
-import pytest
 from datetime import datetime
-from unittest.mock import Mock, MagicMock
-from application.backtest_service import BacktestService
-from infrastructure.yfinance_adapter import StockDataError
-from domain.models import StockPrice, BacktestResult, PortfolioSnapshot
+from unittest.mock import Mock
 
+import pytest
+
+from application.backtest_service import BacktestService
+from domain.models import BacktestResult, StockPrice
+from infrastructure.yfinance_adapter import StockDataError
 
 # ============================================================================
 # Fixtures
@@ -33,10 +34,7 @@ def service(mock_adapter):
 @pytest.fixture
 def sample_prices():
     """Sample price data for testing"""
-    return [
-        StockPrice(date=datetime(2024, 1, i), close=100.0 + i)
-        for i in range(1, 31)
-    ]
+    return [StockPrice(date=datetime(2024, 1, i), close=100.0 + i) for i in range(1, 31)]
 
 
 @pytest.fixture
@@ -57,9 +55,7 @@ def end_date():
 class TestRunBacktest:
     """Tests for run_backtest() method"""
 
-    def test_lump_sum_success(
-        self, service, mock_adapter, sample_prices, start_date, end_date
-    ):
+    def test_lump_sum_success(self, service, mock_adapter, sample_prices, start_date, end_date):
         """Should successfully run lump sum backtest"""
         # Given
         mock_adapter.get_stock_data.return_value = (sample_prices, "Test Stock")
@@ -82,9 +78,7 @@ class TestRunBacktest:
         assert result.final_value > 0
         mock_adapter.get_stock_data.assert_called_once_with("TEST", start_date, end_date)
 
-    def test_dca_success(
-        self, service, mock_adapter, sample_prices, start_date, end_date
-    ):
+    def test_dca_success(self, service, mock_adapter, sample_prices, start_date, end_date):
         """Should successfully run DCA backtest"""
         # Given
         mock_adapter.get_stock_data.return_value = (sample_prices, "Test Stock")
@@ -122,9 +116,7 @@ class TestRunBacktest:
         # Then
         mock_adapter.get_stock_data.assert_called_once_with("AAPL", start_date, end_date)
 
-    def test_raises_on_stock_data_error(
-        self, service, mock_adapter, start_date, end_date
-    ):
+    def test_raises_on_stock_data_error(self, service, mock_adapter, start_date, end_date):
         """Should propagate StockDataError from adapter"""
         # Given
         mock_adapter.get_stock_data.side_effect = StockDataError("Stock not found")
@@ -152,7 +144,7 @@ class TestRunBacktest:
                 symbol="TEST",
                 start_date=start_date,
                 end_date=end_date,
-                strategy="invalid_strategy",  # type: ignore
+                strategy="invalid_strategy",
                 amount=10000.0,
             )
 
@@ -172,7 +164,10 @@ class TestRunMultipleBacktests:
         # Given
         mock_adapter.get_stock_data.side_effect = [
             (sample_prices, "Stock A"),
-            ([StockPrice(date=datetime(2024, 1, i), close=200.0 + i) for i in range(1, 31)], "Stock B"),
+            (
+                [StockPrice(date=datetime(2024, 1, i), close=200.0 + i) for i in range(1, 31)],
+                "Stock B",
+            ),
         ]
 
         # When
@@ -220,9 +215,7 @@ class TestRunMultipleBacktests:
         assert results[1].symbol == "MSFT"
         assert comparison.best_return in ["AAPL", "MSFT"]
 
-    def test_raises_when_all_symbols_fail(
-        self, service, mock_adapter, start_date, end_date
-    ):
+    def test_raises_when_all_symbols_fail(self, service, mock_adapter, start_date, end_date):
         """Should raise ValueError when all symbols fail"""
         # Given
         mock_adapter.get_stock_data.side_effect = [
@@ -240,9 +233,7 @@ class TestRunMultipleBacktests:
                 amount=10000.0,
             )
 
-    def test_raises_on_empty_symbols_list(
-        self, service, start_date, end_date
-    ):
+    def test_raises_on_empty_symbols_list(self, service, start_date, end_date):
         """Should raise ValueError when no symbols provided"""
         # When/Then
         with pytest.raises(ValueError, match="At least one symbol is required"):
@@ -304,14 +295,15 @@ class TestRunMultipleBacktests:
         assert comparison.lowest_risk == "TEST"
         assert comparison.best_cagr == "TEST"
 
-    def test_dca_strategy(
-        self, service, mock_adapter, start_date, end_date
-    ):
+    def test_dca_strategy(self, service, mock_adapter, start_date, end_date):
         """Should work with DCA strategy"""
         # Given
         # Create 90 days of data (3 months)
         prices = [
-            StockPrice(date=datetime(2024, 1, 1) + __import__('datetime').timedelta(days=i), close=100.0 + i)
+            StockPrice(
+                date=datetime(2024, 1, 1) + __import__("datetime").timedelta(days=i),
+                close=100.0 + i,
+            )
             for i in range(90)
         ]
         mock_adapter.get_stock_data.return_value = (prices, "Test Stock")

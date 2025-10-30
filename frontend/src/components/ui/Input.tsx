@@ -1,6 +1,6 @@
-import { forwardRef } from 'react';
-import type { InputHTMLAttributes } from 'react';
-import { clsx } from 'clsx';
+import { forwardRef } from "react";
+import type { InputHTMLAttributes } from "react";
+import { clsx } from "clsx";
 
 interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   label?: string;
@@ -20,10 +20,10 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
           ref={ref}
           className={clsx(
             // 使用 brutalist-input CSS 類別
-            'brutalist-input w-full px-5 py-4',
+            "brutalist-input w-full px-5 py-4",
             // 錯誤狀態覆蓋
-            error && 'border-danger-500 focus:border-danger-500',
-            className
+            error && "border-danger-500 focus:border-danger-500",
+            className,
           )}
           {...props}
         />
@@ -34,7 +34,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
         )}
       </div>
     );
-  }
+  },
 );
 
-Input.displayName = 'Input';
+Input.displayName = "Input";

@@ -1,18 +1,18 @@
-import axios, { AxiosError } from 'axios';
-import { API_BASE_URL, ERROR_MESSAGES } from '@/constants';
+import axios, { AxiosError } from "axios";
+import { API_BASE_URL, ERROR_MESSAGES } from "@/constants";
 
 export const apiClient = axios.create({
   baseURL: API_BASE_URL,
   timeout: 30000,
   headers: {
-    'Content-Type': 'application/json',
+    "Content-Type": "application/json",
   },
 });
 
 apiClient.interceptors.response.use(
   (response) => response,
   (error: AxiosError) => {
-    if (error.code === 'ECONNABORTED') {
+    if (error.code === "ECONNABORTED") {
       throw new Error(ERROR_MESSAGES.TIMEOUT_ERROR);
     }
 
@@ -36,5 +36,5 @@ apiClient.interceptors.response.use(
     }
 
     throw error;
-  }
+  },
 );

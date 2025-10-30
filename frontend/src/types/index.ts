@@ -9,7 +9,7 @@
 // Enums & Literals
 // ============================================================================
 
-export type Strategy = 'lump_sum' | 'dca';
+export type Strategy = "lump_sum" | "dca";
 
 // ============================================================================
 // Request Types
@@ -21,8 +21,8 @@ export interface InvestmentParams {
 
 export interface BacktestRequest {
   stocks: string[];
-  start_date: string;  // YYYY-MM-DD
-  end_date: string;    // YYYY-MM-DD
+  start_date: string; // YYYY-MM-DD
+  end_date: string; // YYYY-MM-DD
   strategy: Strategy;
   investment: InvestmentParams;
 }
@@ -44,13 +44,13 @@ export interface BacktestResult {
   strategy: Strategy;
 
   // Return metrics
-  total_return: number;      // e.g., 0.25 = 25%
-  cagr: number;             // Compound Annual Growth Rate
+  total_return: number; // e.g., 0.25 = 25%
+  cagr: number; // Compound Annual Growth Rate
 
   // Risk metrics
-  max_drawdown: number;     // e.g., -0.15 = -15%
-  volatility: number;       // Annualized volatility
-  sharpe_ratio: number;     // Risk-adjusted return
+  max_drawdown: number; // e.g., -0.15 = -15%
+  volatility: number; // Annualized volatility
+  sharpe_ratio: number; // Risk-adjusted return
 
   // Portfolio summary
   final_value: number;
@@ -61,10 +61,10 @@ export interface BacktestResult {
 }
 
 export interface ComparisonResult {
-  best_return: string;      // Symbol with best total return
-  best_sharpe: string;      // Symbol with best Sharpe ratio
-  lowest_risk: string;      // Symbol with lowest volatility
-  best_cagr: string;        // Symbol with best CAGR
+  best_return: string; // Symbol with best total return
+  best_sharpe: string; // Symbol with best Sharpe ratio
+  lowest_risk: string; // Symbol with lowest volatility
+  best_cagr: string; // Symbol with best CAGR
 
   // Additional comparison data
   best_performer: {

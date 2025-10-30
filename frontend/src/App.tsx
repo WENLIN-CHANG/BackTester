@@ -1,6 +1,10 @@
-import { BacktestForm, ResultsTable, PerformanceChart } from '@/components/features';
-import { Spinner, ErrorMessage } from '@/components/ui';
-import { useBacktest } from '@/hooks/useBacktest';
+import {
+  BacktestForm,
+  ResultsTable,
+  PerformanceChart,
+} from "@/components/features";
+import { Spinner, ErrorMessage } from "@/components/ui";
+import { useBacktest } from "@/hooks/useBacktest";
 
 function App() {
   const mutation = useBacktest();
@@ -40,14 +44,17 @@ function App() {
 
             {isError && (
               <ErrorMessage
-                message={error?.message || '發生錯誤，請稍後再試'}
+                message={error?.message || "發生錯誤，請稍後再試"}
               />
             )}
 
             {data && (
               <div className="space-y-6">
                 <PerformanceChart results={data.results} />
-                <ResultsTable results={data.results} comparison={data.comparison} />
+                <ResultsTable
+                  results={data.results}
+                  comparison={data.comparison}
+                />
               </div>
             )}
 

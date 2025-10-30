@@ -1,6 +1,6 @@
-import { forwardRef } from 'react';
-import type { HTMLAttributes } from 'react';
-import { clsx } from 'clsx';
+import { forwardRef } from "react";
+import type { HTMLAttributes } from "react";
+import { clsx } from "clsx";
 
 interface CardProps extends HTMLAttributes<HTMLDivElement> {
   title?: string;
@@ -13,8 +13,8 @@ export const Card = forwardRef<HTMLDivElement, CardProps>(
         ref={ref}
         className={clsx(
           // Brutalist Card with Tilt
-          'brutalist-card brutalist-tilt-1',
-          className
+          "brutalist-card brutalist-tilt-1",
+          className,
         )}
         {...props}
       >
@@ -28,7 +28,7 @@ export const Card = forwardRef<HTMLDivElement, CardProps>(
         <div className="p-8">{children}</div>
       </div>
     );
-  }
+  },
 );
 
-Card.displayName = 'Card';
+Card.displayName = "Card";

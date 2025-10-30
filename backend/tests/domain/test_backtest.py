@@ -5,10 +5,12 @@ Testing backtest logic with TDD approach.
 Goal: 100% coverage for domain layer.
 """
 
-import pytest
 from datetime import datetime, timedelta
-from domain.backtest import backtest_lump_sum, backtest_dca
-from domain.models import StockPrice, BacktestResult
+
+import pytest
+
+from domain.backtest import backtest_dca, backtest_lump_sum
+from domain.models import StockPrice
 
 
 class TestBacktestLumpSum:
@@ -74,9 +76,7 @@ class TestBacktestLumpSum:
         expected_shares = initial_amount / first_price
         assert abs(result.history[0].shares - expected_shares) < 0.01
 
-    def test_portfolio_value_changes_with_price(
-        self, simple_prices: list[StockPrice]
-    ) -> None:
+    def test_portfolio_value_changes_with_price(self, simple_prices: list[StockPrice]) -> None:
         # Given
         initial_amount = 100000.0
 
@@ -103,9 +103,7 @@ class TestBacktestLumpSum:
         shares = [snapshot.shares for snapshot in result.history]
         assert all(abs(s - shares[0]) < 0.01 for s in shares)
 
-    def test_max_drawdown_with_volatile_prices(
-        self, volatile_prices: list[StockPrice]
-    ) -> None:
+    def test_max_drawdown_with_volatile_prices(self, volatile_prices: list[StockPrice]) -> None:
         # Given
         initial_amount = 100000.0
 
@@ -143,9 +141,7 @@ class TestBacktestLumpSum:
 
         # When/Then
         with pytest.raises(ValueError, match="Initial amount must be positive"):
-            backtest_lump_sum(
-                prices=simple_prices, initial_amount=initial_amount, symbol="TEST"
-            )
+            backtest_lump_sum(prices=simple_prices, initial_amount=initial_amount, symbol="TEST")
 
     def test_raises_on_negative_amount(self, simple_prices: list[StockPrice]) -> None:
         # Given
@@ -153,9 +149,7 @@ class TestBacktestLumpSum:
 
         # When/Then
         with pytest.raises(ValueError, match="Initial amount must be positive"):
-            backtest_lump_sum(
-                prices=simple_prices, initial_amount=initial_amount, symbol="TEST"
-            )
+            backtest_lump_sum(prices=simple_prices, initial_amount=initial_amount, symbol="TEST")
 
     def test_default_symbol_and_name(self, simple_prices: list[StockPrice]) -> None:
         # Given
@@ -197,9 +191,7 @@ class TestBacktestDCA:
             prices.append(StockPrice(date=base_date + timedelta(days=i), close=price))
         return prices
 
-    def test_basic_dca_positive_return(
-        self, monthly_prices: list[StockPrice]
-    ) -> None:
+    def test_basic_dca_positive_return(self, monthly_prices: list[StockPrice]) -> None:
         # Given
         monthly_amount = 10000.0
 
@@ -224,9 +216,7 @@ class TestBacktestDCA:
         monthly_amount = 10000.0
 
         # When
-        result = backtest_dca(
-            prices=monthly_prices, monthly_amount=monthly_amount, symbol="TEST"
-        )
+        result = backtest_dca(prices=monthly_prices, monthly_amount=monthly_amount, symbol="TEST")
 
         # Then: Should invest once per month
         # 252 days = ~9 months of data (Jan 1 to Sep 8)
@@ -234,32 +224,24 @@ class TestBacktestDCA:
         expected_total_invested = monthly_amount * expected_months
         assert result.total_invested == expected_total_invested
 
-    def test_shares_accumulate_over_time(
-        self, monthly_prices: list[StockPrice]
-    ) -> None:
+    def test_shares_accumulate_over_time(self, monthly_prices: list[StockPrice]) -> None:
         # Given
         monthly_amount = 10000.0
 
         # When
-        result = backtest_dca(
-            prices=monthly_prices, monthly_amount=monthly_amount, symbol="TEST"
-        )
+        result = backtest_dca(prices=monthly_prices, monthly_amount=monthly_amount, symbol="TEST")
 
         # Then: Shares should increase (or stay same) over time
         shares_over_time = [snapshot.shares for snapshot in result.history]
         for i in range(1, len(shares_over_time)):
             assert shares_over_time[i] >= shares_over_time[i - 1]
 
-    def test_cumulative_invested_increases(
-        self, monthly_prices: list[StockPrice]
-    ) -> None:
+    def test_cumulative_invested_increases(self, monthly_prices: list[StockPrice]) -> None:
         # Given
         monthly_amount = 10000.0
 
         # When
-        result = backtest_dca(
-            prices=monthly_prices, monthly_amount=monthly_amount, symbol="TEST"
-        )
+        result = backtest_dca(prices=monthly_prices, monthly_amount=monthly_amount, symbol="TEST")
 
         # Then: Cumulative invested should increase monthly
         cumulative = [snapshot.cumulative_invested for snapshot in result.history]
@@ -274,18 +256,14 @@ class TestBacktestDCA:
         monthly_amount = 10000.0
 
         # When
-        result = backtest_dca(
-            prices=monthly_prices, monthly_amount=monthly_amount, symbol="TEST"
-        )
+        result = backtest_dca(prices=monthly_prices, monthly_amount=monthly_amount, symbol="TEST")
 
         # Then: First snapshot should show first investment
         first_snapshot = result.history[0]
         assert first_snapshot.cumulative_invested == monthly_amount
         assert first_snapshot.shares > 0
 
-    def test_dca_handles_volatility(
-        self, volatile_monthly_prices: list[StockPrice]
-    ) -> None:
+    def test_dca_handles_volatility(self, volatile_monthly_prices: list[StockPrice]) -> None:
         # Given
         monthly_amount = 10000.0
 
@@ -306,9 +284,7 @@ class TestBacktestDCA:
         monthly_amount = 10000.0
 
         # When
-        result = backtest_dca(
-            prices=monthly_prices, monthly_amount=monthly_amount, symbol="TEST"
-        )
+        result = backtest_dca(prices=monthly_prices, monthly_amount=monthly_amount, symbol="TEST")
 
         # Then: All metrics should be calculated
         assert isinstance(result.total_return, float)
@@ -332,21 +308,15 @@ class TestBacktestDCA:
 
         # When/Then
         with pytest.raises(ValueError, match="Monthly amount must be positive"):
-            backtest_dca(
-                prices=monthly_prices, monthly_amount=monthly_amount, symbol="TEST"
-            )
+            backtest_dca(prices=monthly_prices, monthly_amount=monthly_amount, symbol="TEST")
 
-    def test_raises_on_negative_amount(
-        self, monthly_prices: list[StockPrice]
-    ) -> None:
+    def test_raises_on_negative_amount(self, monthly_prices: list[StockPrice]) -> None:
         # Given
         monthly_amount = -10000.0
 
         # When/Then
         with pytest.raises(ValueError, match="Monthly amount must be positive"):
-            backtest_dca(
-                prices=monthly_prices, monthly_amount=monthly_amount, symbol="TEST"
-            )
+            backtest_dca(prices=monthly_prices, monthly_amount=monthly_amount, symbol="TEST")
 
     def test_default_symbol_and_name(self, monthly_prices: list[StockPrice]) -> None:
         # Given
@@ -362,10 +332,7 @@ class TestBacktestDCA:
     def test_single_month_data(self) -> None:
         # Given: Less than a month of data
         base_date = datetime(2024, 1, 1)
-        prices = [
-            StockPrice(date=base_date + timedelta(days=i), close=100.0)
-            for i in range(20)
-        ]
+        prices = [StockPrice(date=base_date + timedelta(days=i), close=100.0) for i in range(20)]
 
         # When
         result = backtest_dca(prices=prices, monthly_amount=10000.0, symbol="TEST")

@@ -4,8 +4,8 @@ API Dependencies - Dependency injection for FastAPI
 Provides instances of services and adapters.
 """
 
-from infrastructure.yfinance_adapter import YFinanceAdapter
 from application.backtest_service import BacktestService
+from infrastructure.yfinance_adapter import YFinanceAdapter
 
 
 def get_yfinance_adapter() -> YFinanceAdapter:

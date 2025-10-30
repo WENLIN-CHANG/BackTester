@@ -4,9 +4,10 @@ FastAPI Application Entry Point
 Main application setup with CORS, routing, and error handling.
 """
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
+
 from api.routes import router
 
 # Create FastAPI app
@@ -37,7 +38,7 @@ app.include_router(router)
 
 # Root endpoint
 @app.get("/")
-async def root() -> dict:
+async def root() -> dict[str, str]:
     """
     Root endpoint
 
@@ -54,11 +55,11 @@ async def root() -> dict:
 
 # Global exception handler
 @app.exception_handler(Exception)
-async def global_exception_handler(request, exc):
+async def global_exception_handler(request: Request, exc: Exception) -> JSONResponse:
     """Handle uncaught exceptions"""
     return JSONResponse(
         status_code=500,
-        content={"detail": f"Internal server error: {str(exc)}"},
+        content={"detail": f"Internal server error: {exc!s}"},
     )
 
 
@@ -67,7 +68,7 @@ if __name__ == "__main__":
 
     uvicorn.run(
         "main:app",
-        host="0.0.0.0",
+        host="0.0.0.0",  # nosec B104 - Development server, binding to all interfaces is intentional
         port=8000,
         reload=True,
         log_level="info",

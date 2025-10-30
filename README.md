@@ -1,5 +1,12 @@
 # BackTester - 投資回測系統
 
+![CI](https://github.com/YOUR_USERNAME/BackTester/workflows/CI/badge.svg)
+[![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.0+-blue.svg)](https://www.typescriptlang.org/)
+[![FastAPI](https://img.shields.io/badge/FastAPI-0.115+-green.svg)](https://fastapi.tiangolo.com/)
+[![React](https://img.shields.io/badge/React-18+-blue.svg)](https://react.dev/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
 > 用數據說話，驗證你的投資理論
 
 ## 專案簡介
@@ -126,6 +133,89 @@ BackTester/
 ├── CLAUDE.md            # 技術文件與架構說明
 └── README.md            # 本文件
 ```
+
+## 開發流程
+
+本專案使用 **pre-commit hooks** 和 **GitHub Actions CI** 確保程式碼品質。
+
+### Pre-commit Hooks（本地防護）
+
+安裝後，每次 `git commit` 都會自動執行以下檢查：
+
+1. **格式化**：自動修正程式碼格式（ruff format, prettier）
+2. **Lint**：檢查程式碼風格（ruff, eslint）
+3. **型別檢查**：mypy + tsc（確保型別安全）
+4. **安全掃描**：bandit（檢查常見安全漏洞）
+5. **快速測試**：pytest unit tests（只跑 domain layer）
+
+**安裝步驟：**
+
+```bash
+# Backend
+cd backend
+pip install -r requirements.txt
+pre-commit install
+
+# Frontend
+cd frontend
+npm install
+
+# 測試 pre-commit（手動執行）
+cd ..
+pre-commit run --all-files
+```
+
+**首次 commit 會較慢**（需下載 hooks），之後只檢查變更的檔案（5-10 秒）。
+
+### GitHub Actions CI（遠端防護）
+
+推送程式碼或建立 PR 時，會自動執行完整的 CI pipeline：
+
+| Job | 內容 | 時間 |
+|-----|------|------|
+| **lint-python** | ruff check | ~30s |
+| **lint-frontend** | eslint + prettier | ~30s |
+| **security** | bandit 安全掃描 | ~45s |
+| **typecheck** | mypy + tsc --noEmit | ~45s |
+| **test-backend** | pytest 完整測試 | ~1-2m |
+| **test-frontend** | vitest | ~30s |
+| **build-frontend** | npm run build | ~45s |
+
+所有 jobs **平行執行**，總時間約 2-3 分鐘。
+
+### 開發建議流程
+
+```bash
+# 1. 建立功能分支
+git checkout -b feature/your-feature
+
+# 2. 開發（pre-commit 會在 commit 時自動檢查）
+git add .
+git commit -m "feat: add new feature"
+# → 自動執行 pre-commit hooks
+# → 如果格式有問題會自動修正並要求重新 commit
+
+# 3. 推送到遠端
+git push origin feature/your-feature
+
+# 4. 建立 Pull Request
+# → GitHub Actions 會自動執行完整 CI
+# → 所有檢查通過後才能 merge
+
+# 5. Merge 到 main
+# → 再次執行 CI 確保 main 分支品質
+```
+
+### 繞過 Pre-commit（不建議）
+
+```bash
+# 緊急情況下可以跳過 pre-commit
+git commit --no-verify -m "emergency fix"
+
+# 但 CI 還是會執行，無法繞過
+```
+
+---
 
 ## 快速開始
 
@@ -462,13 +552,21 @@ npm run type-check
 ### 程式碼品質
 
 ```bash
-# Python linting
-flake8 backend/
-black backend/ --check
-mypy backend/
+# Python linting & formatting (使用 ruff 取代 black + flake8)
+cd backend
+ruff check .           # 檢查程式碼風格
+ruff format .          # 自動格式化
+mypy .                 # 型別檢查
+bandit -c .bandit -r . # 安全掃描
 
-# TypeScript linting
-npm run lint
+# TypeScript linting & formatting
+cd frontend
+npm run lint           # ESLint 檢查
+npx prettier --check "src/**/*.{ts,tsx,css,json}"  # 格式檢查
+npx tsc --noEmit       # 型別檢查
+
+# 或使用 pre-commit 一次執行所有檢查
+pre-commit run --all-files
 ```
 
 ## 部署建議

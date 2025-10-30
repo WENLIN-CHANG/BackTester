@@ -22,6 +22,7 @@ httpx==0.27.0  # For FastAPI TestClient
 mypy==1.13.0
 types-requests==2.32.0.20240914
 
-# Code Quality
-ruff==0.8.0
-black==24.10.0
+# Code Quality & Security
+ruff==0.8.6  # Linter + Formatter (replaces black + flake8 + isort)
+bandit==1.8.0  # Security scanner
+pre-commit==4.0.1  # Git hooks framework

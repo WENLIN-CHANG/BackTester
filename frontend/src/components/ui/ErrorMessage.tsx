@@ -1,16 +1,20 @@
-import type { HTMLAttributes } from 'react';
-import { clsx } from 'clsx';
+import type { HTMLAttributes } from "react";
+import { clsx } from "clsx";
 
 interface ErrorMessageProps extends HTMLAttributes<HTMLDivElement> {
   message: string;
 }
 
-export function ErrorMessage({ message, className, ...props }: ErrorMessageProps) {
+export function ErrorMessage({
+  message,
+  className,
+  ...props
+}: ErrorMessageProps) {
   return (
     <div
       className={clsx(
-        'p-4 rounded-lg bg-danger-50 border border-danger-200',
-        className
+        "p-4 rounded-lg bg-danger-50 border border-danger-200",
+        className,
       )}
       role="alert"
       {...props}

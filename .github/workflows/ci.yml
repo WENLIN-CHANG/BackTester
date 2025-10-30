@@ -1,0 +1,224 @@
+# BackTester CI/CD Pipeline
+# Inspired by salary_bee project best practices
+# Reference: https://github.com/oraios/salary_bee
+
+name: CI
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+jobs:
+  # ============================================================
+  # Job 1: Lint Python Code
+  # ============================================================
+  lint-python:
+    name: Lint Python (Ruff)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version-file: backend/.python-version
+          cache: pip
+
+      - name: Install dependencies
+        working-directory: backend
+        run: |
+          pip install ruff
+
+      - name: Run Ruff linter
+        working-directory: backend
+        run: |
+          ruff check . --output-format=github
+
+  # ============================================================
+  # Job 2: Lint Frontend Code
+  # ============================================================
+  lint-frontend:
+    name: Lint Frontend (ESLint + Prettier)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install dependencies
+        working-directory: frontend
+        run: npm ci
+
+      - name: Run ESLint
+        working-directory: frontend
+        run: npx eslint "src/**/*.{ts,tsx}" --max-warnings=0
+
+      - name: Check Prettier formatting
+        working-directory: frontend
+        run: npx prettier --check "src/**/*.{ts,tsx,css,json}"
+
+  # ============================================================
+  # Job 3: Security Scan (Bandit)
+  # ============================================================
+  security:
+    name: Security Scan (Bandit)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version-file: backend/.python-version
+          cache: pip
+
+      - name: Install Bandit
+        working-directory: backend
+        run: |
+          pip install bandit
+
+      - name: Run Bandit security scan
+        working-directory: backend
+        run: |
+          bandit -c .bandit -r . --format github
+
+  # ============================================================
+  # Job 4: Type Checking
+  # ============================================================
+  typecheck:
+    name: Type Check (mypy + tsc)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # Python type checking
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version-file: backend/.python-version
+          cache: pip
+
+      - name: Install Python dependencies
+        working-directory: backend
+        run: |
+          pip install -r requirements.txt
+          pip install mypy types-requests
+
+      - name: Run mypy
+        working-directory: backend
+        run: |
+          mypy . --config-file=mypy.ini
+
+      # TypeScript type checking
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install Frontend dependencies
+        working-directory: frontend
+        run: npm ci
+
+      - name: Run TypeScript compiler
+        working-directory: frontend
+        run: npx tsc --noEmit
+
+  # ============================================================
+  # Job 5: Test Backend
+  # ============================================================
+  test-backend:
+    name: Test Backend (pytest)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version-file: backend/.python-version
+          cache: pip
+
+      - name: Install dependencies
+        working-directory: backend
+        run: |
+          pip install -r requirements.txt
+
+      - name: Run pytest
+        working-directory: backend
+        run: |
+          pytest tests/ -v --tb=short --color=yes
+        env:
+          PYTHONPATH: ${{ github.workspace }}/backend
+
+  # ============================================================
+  # Job 6: Test Frontend
+  # ============================================================
+  test-frontend:
+    name: Test Frontend (Vitest)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install dependencies
+        working-directory: frontend
+        run: npm ci
+
+      - name: Run Vitest
+        working-directory: frontend
+        run: npm run test
+
+  # ============================================================
+  # Job 7: Build Frontend
+  # ============================================================
+  build-frontend:
+    name: Build Frontend (Production)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install dependencies
+        working-directory: frontend
+        run: npm ci
+
+      - name: Build frontend
+        working-directory: frontend
+        run: npm run build
+
+      - name: Check build output
+        working-directory: frontend
+        run: |
+          if [ ! -d "dist" ]; then
+            echo "Error: dist directory not found"
+            exit 1
+          fi
+          echo "Build successful, dist directory created"

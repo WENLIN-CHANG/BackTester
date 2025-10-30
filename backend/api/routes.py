@@ -4,65 +4,70 @@ API Routes - HTTP endpoints
 FastAPI route handlers for the backtest API.
 """
 
-from fastapi import APIRouter, HTTPException, Depends
 from datetime import datetime
-from typing import List
 
-from api.schemas import BacktestRequest, BacktestResponse, ErrorResponse
+from fastapi import APIRouter, Depends, HTTPException
+
 from api.dependencies import get_backtest_service
+from api.schemas import (
+    BacktestRequest,
+    BacktestResponse,
+    BacktestResultSchema,
+    ComparisonSchema,
+    ErrorResponse,
+    PerformerInfoSchema,
+    PortfolioSnapshotSchema,
+)
 from application.backtest_service import BacktestService
-from infrastructure.yfinance_adapter import StockDataError
 from domain.models import BacktestResult, Comparison
-
+from infrastructure.yfinance_adapter import StockDataError
 
 router = APIRouter(prefix="/api", tags=["backtest"])
 
 
-def convert_result_to_schema(result: BacktestResult) -> dict:
-    """Convert domain BacktestResult to API schema dict"""
-    return {
-        "symbol": result.symbol,
-        "name": result.name,
-        "strategy": result.strategy,
-        "total_return": result.total_return,
-        "cagr": result.cagr,
-        "max_drawdown": result.max_drawdown,
-        "volatility": result.volatility,
-        "sharpe_ratio": result.sharpe_ratio,
-        "final_value": result.final_value,
-        "total_invested": result.total_invested,
-        "history": [
-            {
-                "date": snapshot.date,
-                "value": snapshot.value,
-                "shares": snapshot.shares,
-                "cumulative_invested": snapshot.cumulative_invested,
-            }
+def convert_result_to_schema(result: BacktestResult) -> BacktestResultSchema:
+    """Convert domain BacktestResult to API schema"""
+    return BacktestResultSchema(
+        symbol=result.symbol,
+        name=result.name,
+        strategy=result.strategy,
+        total_return=result.total_return,
+        cagr=result.cagr,
+        max_drawdown=result.max_drawdown,
+        volatility=result.volatility,
+        sharpe_ratio=result.sharpe_ratio,
+        final_value=result.final_value,
+        total_invested=result.total_invested,
+        history=[
+            PortfolioSnapshotSchema(
+                date=snapshot.date,
+                value=snapshot.value,
+                shares=snapshot.shares,
+                cumulative_invested=snapshot.cumulative_invested,
+            )
             for snapshot in result.history
         ],
-    }
+    )
 
 
-def convert_comparison_to_schema(comparison: Comparison) -> dict:
-    """Convert domain Comparison to API schema dict"""
-    return {
-        # Simple comparisons
-        "best_return": comparison.best_return,
-        "best_sharpe": comparison.best_sharpe,
-        "lowest_risk": comparison.lowest_risk,
-        "best_cagr": comparison.best_cagr,
-        # Detailed comparisons
-        "best_performer": {
-            "symbol": comparison.best_performer.symbol,
-            "total_return": comparison.best_performer.total_return,
-        },
-        "worst_performer": {
-            "symbol": comparison.worst_performer.symbol,
-            "total_return": comparison.worst_performer.total_return,
-        },
-        "average_return": comparison.average_return,
-        "total_invested": comparison.total_invested,
-    }
+def convert_comparison_to_schema(comparison: Comparison) -> ComparisonSchema:
+    """Convert domain Comparison to API schema"""
+    return ComparisonSchema(
+        best_return=comparison.best_return,
+        best_sharpe=comparison.best_sharpe,
+        lowest_risk=comparison.lowest_risk,
+        best_cagr=comparison.best_cagr,
+        best_performer=PerformerInfoSchema(
+            symbol=comparison.best_performer.symbol,
+            total_return=comparison.best_performer.total_return,
+        ),
+        worst_performer=PerformerInfoSchema(
+            symbol=comparison.worst_performer.symbol,
+            total_return=comparison.worst_performer.total_return,
+        ),
+        average_return=comparison.average_return,
+        total_invested=comparison.total_invested,
+    )
 
 
 @router.post(
@@ -119,15 +124,15 @@ async def backtest(
         return response
 
     except StockDataError as e:
-        raise HTTPException(status_code=404, detail=str(e))
+        raise HTTPException(status_code=404, detail=str(e)) from e
     except ValueError as e:
-        raise HTTPException(status_code=400, detail=str(e))
+        raise HTTPException(status_code=400, detail=str(e)) from e
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Internal server error: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Internal server error: {e!s}") from e
 
 
 @router.get("/health")
-async def health_check() -> dict:
+async def health_check() -> dict[str, str]:
     """
     Health check endpoint
 

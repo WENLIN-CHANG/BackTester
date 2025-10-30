@@ -9,7 +9,6 @@ All functions in this module are pure:
 This makes them easy to test and reason about.
 """
 
-from typing import List
 from domain.models import BacktestResult, Comparison, PerformerInfo
 
 
@@ -39,10 +38,10 @@ def calculate_cagr(initial: float, final: float, years: float) -> float:
     if final == 0:
         return -1.0
 
-    return (final / initial) ** (1 / years) - 1
+    return float((final / initial) ** (1 / years) - 1)
 
 
-def calculate_max_drawdown(values: List[float]) -> float:
+def calculate_max_drawdown(values: list[float]) -> float:
     """
     Calculate maximum drawdown (peak to trough decline)
 
@@ -78,7 +77,7 @@ def calculate_max_drawdown(values: List[float]) -> float:
     return max_dd
 
 
-def calculate_volatility(returns: List[float]) -> float:
+def calculate_volatility(returns: list[float]) -> float:
     """
     Calculate annualized volatility (standard deviation of returns)
 
@@ -110,10 +109,10 @@ def calculate_volatility(returns: List[float]) -> float:
     # Annualize (252 trading days per year)
     annualized_volatility = std_dev * (252**0.5)
 
-    return annualized_volatility
+    return float(annualized_volatility)
 
 
-def calculate_sharpe_ratio(returns: List[float], risk_free_rate: float = 0.02) -> float:
+def calculate_sharpe_ratio(returns: list[float], risk_free_rate: float = 0.02) -> float:
     """
     Calculate Sharpe Ratio (risk-adjusted return)
 
@@ -147,7 +146,7 @@ def calculate_sharpe_ratio(returns: List[float], risk_free_rate: float = 0.02) -
     return (annual_return - risk_free_rate) / volatility
 
 
-def calculate_comparison(results: List[BacktestResult]) -> Comparison:
+def calculate_comparison(results: list[BacktestResult]) -> Comparison:
     """
     Compare multiple backtest results to find best performers
 
