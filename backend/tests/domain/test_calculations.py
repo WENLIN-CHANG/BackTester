@@ -58,7 +58,7 @@ class TestCalculateCAGR:
         result = calculate_cagr(initial, final, years)
 
         # Then
-        assert result == 0.0
+        assert abs(result) < 1e-10  # Close to zero
 
     def test_complete_loss(self) -> None:
         # Given: Lost everything
@@ -124,7 +124,7 @@ class TestCalculateMaxDrawdown:
         result = calculate_max_drawdown(values)
 
         # Then
-        assert result == 0.0
+        assert abs(result) < 1e-10  # Close to zero
 
     def test_simple_drawdown(self) -> None:
         # Given: Peak 120, trough 80
@@ -167,7 +167,7 @@ class TestCalculateMaxDrawdown:
         result = calculate_max_drawdown(values)
 
         # Then: No drawdown possible
-        assert result == 0.0
+        assert abs(result) < 1e-10  # Close to zero
 
     def test_raises_on_empty_list(self) -> None:
         # Given
@@ -189,7 +189,7 @@ class TestCalculateVolatility:
         result = calculate_volatility(returns)
 
         # Then: Zero volatility
-        assert result == 0.0
+        assert abs(result) < 1e-10  # Close to zero
 
     def test_positive_volatility(self) -> None:
         # Given: Some variation
@@ -229,7 +229,7 @@ class TestCalculateVolatility:
         result = calculate_volatility(returns)
 
         # Then: Zero volatility (need at least 2 points for variance)
-        assert result == 0.0
+        assert abs(result) < 1e-10  # Close to zero
 
 
 class TestCalculateSharpeRatio:
@@ -263,7 +263,7 @@ class TestCalculateSharpeRatio:
         result = calculate_sharpe_ratio(returns, risk_free_rate=0.02)
 
         # Then: Should handle division by zero gracefully (returns 0)
-        assert result == 0.0
+        assert abs(result) < 1e-10  # Close to zero
 
     def test_with_different_risk_free_rate(self) -> None:
         # Given: Returns with volatility

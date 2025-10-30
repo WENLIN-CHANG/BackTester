@@ -12,7 +12,7 @@ import pytest
 from fastapi.testclient import TestClient
 
 from api.dependencies import get_backtest_service
-from domain.models import BacktestResult, Comparison, PortfolioSnapshot
+from domain.models import BacktestResult, Comparison, PerformerInfo, PortfolioSnapshot
 from infrastructure.yfinance_adapter import StockDataError
 from main import app
 
@@ -72,6 +72,10 @@ def sample_comparison():
         best_sharpe="TEST",
         lowest_risk="TEST",
         best_cagr="TEST",
+        best_performer=PerformerInfo(symbol="TEST", total_return=0.25),
+        worst_performer=PerformerInfo(symbol="TEST", total_return=0.25),
+        average_return=0.25,
+        total_invested=10000.0,
     )
 
 

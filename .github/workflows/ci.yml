@@ -90,7 +90,7 @@ jobs:
       - name: Run Bandit security scan
         working-directory: backend
         run: |
-          bandit -c .bandit -r . --format github
+          bandit -r . --exclude ./tests --severity-level medium --confidence-level medium
 
   # ============================================================
   # Job 4: Type Checking

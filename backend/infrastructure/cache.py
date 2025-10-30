@@ -83,7 +83,7 @@ class StockCache:
                 cache_path.unlink()
                 return None
 
-            return cast(dict[str, Any], cached_data["data"])
+            return cast("dict[str, Any]", cached_data["data"])
 
         except Exception:
             # If any error occurs, treat as cache miss

@@ -17,8 +17,7 @@
     "sourceType": "module",
     "ecmaFeatures": {
       "jsx": true
-    },
-    "project": "./tsconfig.json"
+    }
   },
   "plugins": ["@typescript-eslint", "react", "react-hooks"],
   "rules": {
