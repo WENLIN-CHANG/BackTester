@@ -12,15 +12,15 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 }
 
 const variantStyles: Record<ButtonVariant, string> = {
-  primary: 'bg-primary-600 hover:bg-primary-700 text-white',
-  secondary: 'bg-gray-200 hover:bg-gray-300 text-gray-900',
-  danger: 'bg-danger-500 hover:bg-danger-600 text-white',
+  primary: 'brutalist-button-primary',
+  secondary: 'brutalist-button-secondary',
+  danger: 'brutalist-button-secondary bg-danger-500 hover:bg-danger-700',
 };
 
 const sizeStyles: Record<ButtonSize, string> = {
-  sm: 'px-3 py-1.5 text-sm',
-  md: 'px-4 py-2 text-base',
-  lg: 'px-6 py-3 text-lg',
+  sm: 'px-6 py-3 text-base',
+  md: 'px-8 py-4 text-lg',
+  lg: 'px-10 py-5 text-2xl',
 };
 
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
@@ -32,16 +32,21 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         ref={ref}
         disabled={isDisabled}
         className={clsx(
-          'rounded-lg font-medium transition-colors duration-200',
-          'focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500',
-          'disabled:opacity-50 disabled:cursor-not-allowed',
+          // 使用 brutalist-button CSS 類別（已包含所有樣式）
+          'uppercase tracking-wide rounded-none',
+          'focus:outline-none focus:ring-2 focus:ring-brutal-black focus:ring-offset-2',
           variantStyles[variant],
           sizeStyles[size],
           className
         )}
         {...props}
       >
-        {loading ? <span className="inline-block animate-spin">⏳</span> : children}
+        {loading ? (
+          <span className="inline-flex items-center gap-2">
+            <span className="inline-block w-4 h-4 border-4 border-brutal-black border-t-transparent animate-spin" />
+            載入中
+          </span>
+        ) : children}
       </button>
     );
   }

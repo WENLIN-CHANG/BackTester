@@ -12,17 +12,20 @@ export const Card = forwardRef<HTMLDivElement, CardProps>(
       <div
         ref={ref}
         className={clsx(
-          'bg-white rounded-lg shadow-md border border-gray-200',
+          // Brutalist Card with Tilt
+          'brutalist-card brutalist-tilt-1',
           className
         )}
         {...props}
       >
         {title && (
-          <div className="px-6 py-4 border-b border-gray-200">
-            <h3 className="text-lg font-semibold text-gray-900">{title}</h3>
+          <div className="px-8 py-5 border-b-4 border-brutal-black bg-brutal-gray">
+            <h3 className="text-2xl font-black uppercase tracking-wide text-brutal-black">
+              {title}
+            </h3>
           </div>
         )}
-        <div className="p-6">{children}</div>
+        <div className="p-8">{children}</div>
       </div>
     );
   }

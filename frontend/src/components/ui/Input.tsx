@@ -12,25 +12,25 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
     return (
       <div className="w-full">
         {label && (
-          <label className="block text-sm font-medium text-gray-700 mb-1">
+          <label className="block text-base font-bold uppercase tracking-wide text-brutal-black mb-2">
             {label}
           </label>
         )}
         <input
           ref={ref}
           className={clsx(
-            'w-full px-3 py-2 border rounded-lg',
-            'focus:outline-none focus:ring-2 focus:ring-primary-500',
-            'disabled:bg-gray-100 disabled:cursor-not-allowed',
-            error
-              ? 'border-danger-500 focus:ring-danger-500'
-              : 'border-gray-300',
+            // 使用 brutalist-input CSS 類別
+            'brutalist-input w-full px-5 py-4',
+            // 錯誤狀態覆蓋
+            error && 'border-danger-500 focus:border-danger-500',
             className
           )}
           {...props}
         />
         {error && (
-          <p className="mt-1 text-sm text-danger-500">{error}</p>
+          <p className="mt-2 text-xs font-semibold text-danger-500 uppercase">
+            {error}
+          </p>
         )}
       </div>
     );

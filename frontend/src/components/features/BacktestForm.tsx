@@ -98,30 +98,45 @@ export function BacktestForm({ mutation }: BacktestFormProps) {
           control={control}
           render={({ field }) => (
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-base font-bold uppercase tracking-wide text-brutal-black mb-2">
                 投資策略
               </label>
               <div className="flex gap-4">
-                <label className="flex items-center">
-                  <input
-                    type="radio"
-                    value="lump_sum"
-                    checked={field.value === 'lump_sum'}
-                    onChange={field.onChange}
-                    className="mr-2"
-                  />
+                {/* 單筆投資卡片 - 傾斜 1° */}
+                <div
+                  onClick={() => field.onChange('lump_sum')}
+                  className={`
+                    flex-1 border-4 border-brutal-black px-4 py-3 cursor-pointer
+                    transition-all duration-150
+                    text-center font-bold uppercase tracking-wide
+                    brutalist-tilt-1
+                    ${
+                      field.value === 'lump_sum'
+                        ? 'bg-brutal-yellow shadow-brutal-lg'
+                        : 'bg-white shadow-brutal-md hover:shadow-brutal-hover hover:translate-x-[-2px] hover:translate-y-[-2px]'
+                    }
+                  `}
+                >
                   單筆投資
-                </label>
-                <label className="flex items-center">
-                  <input
-                    type="radio"
-                    value="dca"
-                    checked={field.value === 'dca'}
-                    onChange={field.onChange}
-                    className="mr-2"
-                  />
+                </div>
+
+                {/* 定期定額卡片 - 傾斜 -1° */}
+                <div
+                  onClick={() => field.onChange('dca')}
+                  className={`
+                    flex-1 border-4 border-brutal-black px-4 py-3 cursor-pointer
+                    transition-all duration-150
+                    text-center font-bold uppercase tracking-wide
+                    brutalist-tilt-minus-1
+                    ${
+                      field.value === 'dca'
+                        ? 'bg-brutal-yellow shadow-brutal-lg'
+                        : 'bg-white shadow-brutal-md hover:shadow-brutal-hover hover:translate-x-[-2px] hover:translate-y-[-2px]'
+                    }
+                  `}
+                >
                   定期定額
-                </label>
+                </div>
               </div>
             </div>
           )}

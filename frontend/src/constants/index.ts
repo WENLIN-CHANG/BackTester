@@ -73,20 +73,20 @@ export const DEFAULT_VALUES = {
 } as const;
 
 // ============================================================================
-// Chart Configuration
+// Chart Configuration (Neubrutalism Colors)
 // ============================================================================
 
 export const CHART_COLORS = [
-  '#2563eb', // Blue
-  '#f59e0b', // Orange
-  '#8b5cf6', // Purple
-  '#ec4899', // Pink
-  '#14b8a6', // Teal
-  '#ef4444', // Red
-  '#10b981', // Green
-  '#f97316', // Deep Orange
-  '#6366f1', // Indigo
-  '#06b6d4', // Cyan
+  '#FFEB3B', // Neon Yellow
+  '#00E5FF', // Bright Cyan
+  '#D946EF', // Electric Purple
+  '#10B981', // Success Green
+  '#F59E0B', // Warning Orange
+  '#EC4899', // Hot Pink
+  '#EF4444', // Danger Red
+  '#14B8A6', // Teal
+  '#8B5CF6', // Purple
+  '#06B6D4', // Cyan
 ] as const;
 
 // ============================================================================

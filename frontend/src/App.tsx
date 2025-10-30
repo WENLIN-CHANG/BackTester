@@ -7,15 +7,20 @@ function App() {
   const { data, isPending, isError, error } = mutation;
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <header className="bg-white shadow-sm border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <h1 className="text-2xl font-bold text-gray-900">BackTester</h1>
-          <p className="text-sm text-gray-600 mt-1">投資回測分析系統</p>
+    <div className="min-h-screen bg-gradient-to-br from-yellow-100 to-yellow-200">
+      {/* Neubrutalism Header with Tilt */}
+      <header className="bg-brutal-yellow border-b-4 border-brutal-black shadow-brutal-lg brutalist-tilt-minus-1">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+          <h1 className="text-4xl font-black uppercase tracking-tight text-brutal-black">
+            BackTester
+          </h1>
+          <p className="text-base font-bold uppercase tracking-wide text-brutal-black mt-1">
+            投資回測分析系統
+          </p>
         </div>
       </header>
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <div className="lg:col-span-1">
             <BacktestForm mutation={mutation} />
@@ -26,7 +31,9 @@ function App() {
               <div className="flex items-center justify-center h-96">
                 <div className="text-center">
                   <Spinner size="lg" />
-                  <p className="mt-4 text-gray-600">計算中，請稍候...</p>
+                  <p className="mt-4 text-base font-bold text-brutal-black uppercase">
+                    計算中，請稍候...
+                  </p>
                 </div>
               </div>
             )}
@@ -45,23 +52,27 @@ function App() {
             )}
 
             {!isPending && !isError && !data && (
-              <div className="flex items-center justify-center h-96 bg-white rounded-lg border-2 border-dashed border-gray-300">
+              <div className="flex items-center justify-center h-96 bg-brutal-gray rounded-none border-3 border-dashed border-brutal-black">
                 <div className="text-center">
                   <svg
-                    className="mx-auto h-12 w-12 text-gray-400"
+                    className="mx-auto h-20 w-20 text-brutal-black"
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"
+                    strokeWidth={3}
                   >
                     <path
                       strokeLinecap="round"
                       strokeLinejoin="round"
-                      strokeWidth={2}
                       d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
                     />
                   </svg>
-                  <h3 className="mt-2 text-sm font-medium text-gray-900">尚無回測結果</h3>
-                  <p className="mt-1 text-sm text-gray-500">請填寫左側表單開始回測</p>
+                  <h3 className="mt-4 text-xl font-black uppercase text-brutal-black">
+                    尚無回測結果
+                  </h3>
+                  <p className="mt-2 text-sm font-bold text-[#666666]">
+                    請填寫左側表單開始回測
+                  </p>
                 </div>
               </div>
             )}
@@ -69,9 +80,10 @@ function App() {
         </div>
       </main>
 
-      <footer className="bg-white border-t border-gray-200 mt-12">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <p className="text-center text-sm text-gray-500">
+      {/* Neubrutalism Footer */}
+      <footer className="bg-brutal-black border-t-5 border-brutal-black mt-12">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+          <p className="text-center text-sm font-bold uppercase tracking-wide text-white">
             BackTester - 投資回測分析系統 © {new Date().getFullYear()}
           </p>
         </div>

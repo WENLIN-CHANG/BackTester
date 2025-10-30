@@ -1,3 +1,139 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* ============================================================================
+   Neubrutalism Design System (inspired by salary_bee)
+   ============================================================================ */
+
+/* 傾斜效果 - Brutalist Tilt */
+.brutalist-tilt-1 {
+  transform: rotate(1deg);
+}
+
+.brutalist-tilt-minus-1 {
+  transform: rotate(-1deg);
+}
+
+.brutalist-tilt-2 {
+  transform: rotate(2deg);
+}
+
+.brutalist-tilt-minus-2 {
+  transform: rotate(-2deg);
+}
+
+.brutalist-tilt-0-5 {
+  transform: rotate(0.5deg);
+}
+
+.brutalist-tilt-minus-0-5 {
+  transform: rotate(-0.5deg);
+}
+
+/* 按鈕 - Brutalist Buttons */
+.brutalist-button-primary {
+  background-color: #fbbf24;
+  border: 4px solid #000000;
+  box-shadow: 4px 4px 0px 0px #000000;
+  font-weight: 700;
+  color: #000000;
+  transition: all 0.15s ease;
+}
+
+.brutalist-button-primary:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 6px 6px 0px 0px #000000;
+}
+
+.brutalist-button-primary:active {
+  transform: translate(2px, 2px);
+  box-shadow: 2px 2px 0px 0px #000000;
+}
+
+.brutalist-button-primary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: 4px 4px 0px 0px #000000;
+}
+
+.brutalist-button-secondary {
+  background-color: #2563eb;
+  border: 4px solid #000000;
+  box-shadow: 4px 4px 0px 0px #000000;
+  font-weight: 700;
+  color: #ffffff;
+  transition: all 0.15s ease;
+}
+
+.brutalist-button-secondary:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 6px 6px 0px 0px #000000;
+}
+
+.brutalist-button-secondary:active {
+  transform: translate(2px, 2px);
+  box-shadow: 2px 2px 0px 0px #000000;
+}
+
+.brutalist-button-secondary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: 4px 4px 0px 0px #000000;
+}
+
+/* 卡片 - Brutalist Cards */
+.brutalist-card {
+  background-color: #ffffff;
+  border: 4px solid #000000;
+  box-shadow: 8px 8px 0px 0px #000000;
+}
+
+/* 輸入框 - Brutalist Input */
+.brutalist-input {
+  border: 4px solid #000000;
+  box-shadow: 4px 4px 0px 0px #000000;
+  background-color: #ffffff;
+  font-weight: 500;
+  font-size: 1.125rem;
+  transition: all 0.2s ease;
+}
+
+.brutalist-input:focus {
+  outline: none;
+  transform: translate(-2px, -2px);
+  box-shadow: 6px 6px 0px 0px #000000;
+  border-color: #2563eb;
+}
+
+.brutalist-input:disabled {
+  background-color: #e5e5e5;
+  cursor: not-allowed;
+}
+
+/* 陰影系統 - Neubrutalist Shadows */
+.neubrutalist-shadow {
+  box-shadow: 4px 4px 0px 0px #000000;
+}
+
+.neubrutalist-shadow-lg {
+  box-shadow: 8px 8px 0px 0px #000000;
+}
+
+.neubrutalist-shadow-xl {
+  box-shadow: 12px 12px 0px 0px #000000;
+}
+
+/* Hover 效果 - Neubrutalist Hover */
+.neubrutalist-hover:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 6px 6px 0px 0px #000000;
+}
+
+/* Active 效果 - Neubrutalist Active */
+.neubrutalist-active:active {
+  transform: translate(2px, 2px);
+  box-shadow: 2px 2px 0px 0px #000000;
+}
